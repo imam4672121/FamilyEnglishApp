@@ -9,13 +9,11 @@ import streamlit as st
 # PASSWORD PROTECTION
 # ========================================
 
-APP_PASSWORD = "familyenglish123"
+APP_PASSWORD = st.secrets["APP_PASSWORD"]
 
-# SESSION STATE
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
-# LOGIN SCREEN
 if not st.session_state.logged_in:
 
     st.title("🏠 Family English Learning System")
