@@ -155,19 +155,9 @@ h1, h2, h3 {
     color: white;
 }
 
-.student-card {
-
-    background-color: #1e293b;
-    padding: 20px;
-    border-radius: 20px;
-    border: 1px solid #334155;
-    margin-bottom: 20px;
-
-}
-
 [data-testid="stMetric"] {
 
-    background-color: #0f172a;
+    background-color: #1e293b;
     border: 1px solid #334155;
     padding: 10px;
     border-radius: 12px;
@@ -307,7 +297,7 @@ with u3:
 
             students[selected_student]["Score"] += 5
 
-        # SAVE DATABASE
+        # SAVE TO DATABASE
 
         cursor.execute("""
 
@@ -343,7 +333,7 @@ with u3:
 st.divider()
 
 # ========================================
-# STUDENT CARDS
+# STUDENT PERFORMANCE CARDS
 # ========================================
 
 st.subheader("👨‍🎓 Student Performance Cards")
@@ -361,28 +351,6 @@ cols = st.columns(3)
 for index, (name, details) in enumerate(sorted_students):
 
     with cols[index % 3]:
-
-        st.markdown(
-            "<div class='student-card'>",
-            unsafe_allow_html=True
-        )
-
-        # =====================================
-        # RANK
-        # =====================================
-
-        rank = index + 1
-
-        badge_color = "#64748b"
-
-        if rank == 1:
-            badge_color = "#FFD700"
-
-        elif rank == 2:
-            badge_color = "#C0C0C0"
-
-        elif rank == 3:
-            badge_color = "#CD7F32"
 
         # =====================================
         # PHOTO
@@ -405,49 +373,43 @@ for index, (name, details) in enumerate(sorted_students):
 
             photo_path = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
 
-        # =====================================
-        # PHOTO + BADGE
-        # =====================================
-
         st.image(
-    photo_path,
-    width=120
-)
+            photo_path,
+            width=120
+        )
 
-# =====================================
-# RANK BADGE
-# =====================================
+        # =====================================
+        # RANK BADGES
+        # =====================================
 
-if rank == 1:
+        rank = index + 1
 
-    st.success("🥇 Rank #1")
+        if rank == 1:
 
-elif rank == 2:
+            st.success("🥇 Rank #1")
 
-    st.info("🥈 Rank #2")
+        elif rank == 2:
 
-elif rank == 3:
+            st.info("🥈 Rank #2")
 
-    st.warning("🥉 Rank #3")
+        elif rank == 3:
 
-else:
+            st.warning("🥉 Rank #3")
 
-    st.caption(f"Rank #{rank}")
+        else:
+
+            st.caption(f"Rank #{rank}")
 
         # =====================================
         # NAME
         # =====================================
 
         st.markdown(
-
-            f"<h3 style='text-align:center;'>👤 {name}</h3>",
-
-            unsafe_allow_html=True
-
+            f"### 👤 {name}"
         )
 
         # =====================================
-        # METRICS ROW
+        # METRICS
         # =====================================
 
         m1, m2, m3, m4 = st.columns(4)
@@ -492,7 +454,7 @@ else:
         st.progress(progress)
 
         # =====================================
-        # BADGES
+        # LEVEL BADGES
         # =====================================
 
         if details["Score"] >= 100:
@@ -510,11 +472,6 @@ else:
         else:
 
             st.warning("💪 Keep Practicing")
-
-        st.markdown(
-            "</div>",
-            unsafe_allow_html=True
-        )
 
 st.divider()
 
@@ -549,7 +506,7 @@ st.plotly_chart(
 st.divider()
 
 # ========================================
-# DATABASE BACKUP
+# DOWNLOAD DATABASE
 # ========================================
 
 st.subheader("💾 Backup Database")
@@ -571,7 +528,7 @@ with open("english_class.db", "rb") as file:
 st.divider()
 
 # ========================================
-# RESET SECTION
+# RESET SCORES
 # ========================================
 
 st.subheader("⚙️ Controls")
