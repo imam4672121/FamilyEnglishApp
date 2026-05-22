@@ -331,91 +331,91 @@ for index, (name, details) in enumerate(sorted_students):
         photo_path_png = f"photos/{safe_name}.png"
 
         # =====================================
-# RANK BADGE
-# =====================================
+  	 # RANK BADGE
+	# =====================================
 
-rank = index + 1
+	rank = index + 1
 
-badge_color = "#64748b"
+	badge_color = "#64748b"
 
-if rank == 1:
-    badge_color = "#FFD700"   # Gold
+	if rank == 1:
+  		badge_color = "#FFD700"   # Gold
 
-elif rank == 2:
-    badge_color = "#C0C0C0"   # Silver
+	elif rank == 2:
+   		 badge_color = "#C0C0C0"   # Silver
 
-elif rank == 3:
-    badge_color = "#CD7F32"   # Bronze
+	elif rank == 3:
+   	badge_color = "#CD7F32"   # Bronze
 
-# =====================================
-# PHOTO
-# =====================================
+	# =====================================
+	# PHOTO
+	# =====================================
 
-safe_name = name.lower().replace(" ", "_")
-
-photo_path_jpg = f"photos/{safe_name}.jpg"
-photo_path_png = f"photos/{safe_name}.png"
-
-photo_path = None
-
-if os.path.exists(photo_path_jpg):
-    photo_path = photo_path_jpg
-
-elif os.path.exists(photo_path_png):
-    photo_path = photo_path_png
-
-else:
-    photo_path = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-
-# =====================================
-# PHOTO + BADGE HTML
-# =====================================
-
-st.markdown(f"""
-
-<div style="position:relative; width:120px;">
-
-    <img src="{photo_path}"
-    width="120"
-    style="
-        border-radius:50%;
-        border:4px solid {badge_color};
-        object-fit:cover;
-    ">
-
-    <div style="
-        position:absolute;
-        top:-10px;
-        right:-10px;
-
-        background:{badge_color};
-
-        color:black;
-
-        width:35px;
-        height:35px;
-
-        border-radius:50%;
-
-        display:flex;
-        align-items:center;
-        justify-content:center;
-
-        font-weight:bold;
-        font-size:16px;
-
-        border:2px solid white;
-    ">
-
-        #{rank}
-
-    </div>
-
-</div>
-
-""", unsafe_allow_html=True)
-
-        # NAME
+	safe_name = name.lower().replace(" ", "_")
+	
+	photo_path_jpg = f"photos/{safe_name}.jpg"
+	photo_path_png = f"photos/{safe_name}.png"
+	
+	photo_path = None
+	
+	if os.path.exists(photo_path_jpg):
+	    photo_path = photo_path_jpg
+	
+	elif os.path.exists(photo_path_png):
+	    photo_path = photo_path_png
+	
+	else:
+	    photo_path = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+	
+	# =====================================
+	# PHOTO + BADGE HTML
+	# =====================================
+	
+	st.markdown(f"""
+	
+	<div style="position:relative; width:120px;">
+	
+	    <img src="{photo_path}"
+	    width="120"
+	    style="
+	        border-radius:50%;
+	        border:4px solid {badge_color};
+	        object-fit:cover;
+	    ">
+	
+	    <div style="
+	        position:absolute;
+	        top:-10px;
+	        right:-10px;
+	
+	        background:{badge_color};
+	
+	        color:black;
+	
+	        width:35px;
+	        height:35px;
+	
+	        border-radius:50%;
+	
+	        display:flex;
+	        align-items:center;
+	        justify-content:center;
+	
+	        font-weight:bold;
+	        font-size:16px;
+	
+	        border:2px solid white;
+	    ">
+	
+	        #{rank}
+	
+	    </div>
+	
+	</div>
+	
+	""", unsafe_allow_html=True)
+	
+	        # NAME
         st.markdown(f"### 👤 {name}")
         # SINGLE ROW METRICS
 # =====================================
