@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 import sqlite3
 import os
+import zipfile
 
 # ========================================
 # PAGE CONFIG
@@ -670,3 +671,67 @@ if st.button("🔄 Reset Weekly Scores"):
     )
 
     st.rerun()
+
+# ========================================
+# FULL PROJECT BACKUP
+# ========================================
+
+st.divider()
+
+st.subheader("🗂️ Full Project Backup")
+
+if st.button("📦 Create Full Backup ZIP"):
+
+    zip_filename = "family_english_backup.zip"
+
+    with zipfile.ZipFile(
+        zip_filename,
+        "w"
+    ) as zipf:
+
+        # ADD MAIN FILES
+
+        files_to_backup = [
+
+            "app.py",
+            "english_class.db",
+            "requirements.txt"
+
+        ]
+
+        for file in files_to_backup:
+
+            if os.path.exists(file):
+
+                zipf.write(file)
+
+        # ADD PHOTOS FOLDER
+
+        if os.path.exists("photos"):
+
+            for foldername, subfolders, filenames in os.walk("photos"):
+
+                for filename in filenames:
+
+                    filepath = os.path.join(
+                        foldername,
+                        filename
+                    )
+
+                    zipf.write(filepath)
+
+    st.success("✅ Backup ZIP Created Successfully!")
+
+    with open(zip_filename, "rb") as f:
+
+        st.download_button(
+
+            label="⬇️ Download Full Backup",
+
+            data=f,
+
+            file_name=zip_filename,
+
+            mime="application/zip"
+
+        )
