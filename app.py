@@ -409,49 +409,30 @@ for index, (name, details) in enumerate(sorted_students):
         # PHOTO + BADGE
         # =====================================
 
-        st.markdown(f"""
+        st.image(
+    photo_path,
+    width=120
+)
 
-        <div style="position:relative; width:120px; margin:auto;">
+# =====================================
+# RANK BADGE
+# =====================================
 
-            <img src="{photo_path}"
-            width="120"
-            style="
-                border-radius:50%;
-                border:4px solid {badge_color};
-                object-fit:cover;
-            ">
+if rank == 1:
 
-            <div style="
-                position:absolute;
-                top:-10px;
-                right:-10px;
+    st.success("🥇 Rank #1")
 
-                background:{badge_color};
+elif rank == 2:
 
-                color:black;
+    st.info("🥈 Rank #2")
 
-                width:35px;
-                height:35px;
+elif rank == 3:
 
-                border-radius:50%;
+    st.warning("🥉 Rank #3")
 
-                display:flex;
-                align-items:center;
-                justify-content:center;
+else:
 
-                font-weight:bold;
-                font-size:16px;
-
-                border:2px solid white;
-            ">
-
-                #{rank}
-
-            </div>
-
-        </div>
-
-        """, unsafe_allow_html=True)
+    st.caption(f"Rank #{rank}")
 
         # =====================================
         # NAME
