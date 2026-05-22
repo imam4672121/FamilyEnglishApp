@@ -434,6 +434,26 @@ st.plotly_chart(
 st.divider()
 
 # ========================================
+# DOWNLOAD DATABASE
+# ========================================
+
+st.subheader("💾 Backup Database")
+
+with open("english_class.db", "rb") as file:
+
+    st.download_button(
+
+        label="📥 Download Database Backup",
+
+        data=file,
+
+        file_name="english_class_backup.db",
+
+        mime="application/octet-stream"
+
+    )
+
+# ========================================
 # RESET BUTTON
 # ========================================
 
