@@ -422,35 +422,6 @@ for index, (name, details) in enumerate(sorted_students):
 
     with cols[index % 3]:
 
-        st.markdown(
-            "<div class='student-card'>",
-            unsafe_allow_html=True
-        )
-
-        # =====================================
-        # RANK
-        # =====================================
-
-        rank = index + 1
-
-        badge_class = "normal"
-        badge_emoji = "🎖️"
-
-        if rank == 1:
-
-            badge_class = "gold"
-            badge_emoji = "🥇"
-
-        elif rank == 2:
-
-            badge_class = "silver"
-            badge_emoji = "🥈"
-
-        elif rank == 3:
-
-            badge_class = "bronze"
-            badge_emoji = "🥉"
-
         # =====================================
         # PHOTO
         # =====================================
@@ -473,104 +444,147 @@ for index, (name, details) in enumerate(sorted_students):
             photo_path = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
 
         # =====================================
-        # PHOTO + BADGE
+        # RANK
         # =====================================
 
-        st.markdown(f"""
+        rank = index + 1
 
-        <div class="photo-wrapper">
+        if rank == 1:
 
-            <img src="{photo_path}"
-            class="student-photo">
+            badge = "🥇"
 
-            <div class="rank-badge {badge_class}">
-                {badge_emoji}
-            </div>
+        elif rank == 2:
 
-        </div>
+            badge = "🥈"
 
-        """, unsafe_allow_html=True)
+        elif rank == 3:
 
-        # =====================================
-        # NAME
-        # =====================================
-
-        st.markdown(
-            f"<h2 style='text-align:center;'>👤 {name}</h2>",
-            unsafe_allow_html=True
-        )
-
-        # =====================================
-        # METRICS
-        # =====================================
-
-        m1, m2, m3, m4 = st.columns(4)
-
-        with m1:
-
-            st.metric(
-                "⭐ Score",
-                details["Score"]
-            )
-
-        with m2:
-
-            st.metric(
-                "✅ Correct",
-                details["Correct"]
-            )
-
-        with m3:
-
-            st.metric(
-                "❌ Wrong",
-                details["Wrong"]
-            )
-
-        with m4:
-
-            st.metric(
-                "🎤 Voice",
-                details["Voice"]
-            )
-
-        # =====================================
-        # PROGRESS BAR
-        # =====================================
-
-        progress = min(
-            max(details["Score"], 0),
-            100
-        )
-
-        st.progress(progress)
-
-        # =====================================
-        # LEVEL BADGES
-        # =====================================
-
-        if details["Score"] >= 100:
-
-            st.success("🏆 English Master")
-
-        elif details["Score"] >= 70:
-
-            st.success("⭐ Super Speaker")
-
-        elif details["Score"] >= 40:
-
-            st.info("🔥 Improving Fast")
+            badge = "🥉"
 
         else:
 
-            st.warning("💪 Keep Practicing")
+            badge = "🏅"
 
-        st.markdown(
-            "</div>",
-            unsafe_allow_html=True
-        )
+        # =====================================
+        # CARD CONTAINER
+        # =====================================
 
-st.divider()
+        with st.container():
+
+            # CENTER PHOTO
+
+            c1, c2, c3 = st.columns([1,2,1])
+
+            with c2:
+
+                st.image(
+                    photo_path,
+                    width=130
+                )
+
+            # RANK BADGE
+
+            st.markdown(
+
+                f"""
+
+                <div style='
+                    text-align:center;
+                    margin-top:-15px;
+                    margin-bottom:10px;
+                    font-size:28px;
+                    font-weight:bold;
+                '>
+
+                {badge} Rank #{rank}
+
+                </div>
+
+                """,
+
+                unsafe_allow_html=True
+
+            )
+
+            # NAME
+
+            st.markdown(
+
+                f"""
+
+                <h2 style='
+                    text-align:center;
+                    color:white;
+                '>
+
+                👤 {name}
+
+                </h2>
+
+                """,
+
+                unsafe_allow_html=True
+
+            )
+
+            # METRICS
+
+            m1, m2, m3, m4 = st.columns(4)
+
+            with m1:
+
+                st.metric(
+                    "⭐ Score",
+                    details["Score"]
+                )
+
+            with m2:
+
+                st.metric(
+                    "✅ Correct",
+                    details["Correct"]
+                )
+
+            with m3:
+
+                st.metric(
+                    "❌ Wrong",
+                    details["Wrong"]
+                )
+
+            with m4:
+
+                st.metric(
+                    "🎤 Voice",
+                    details["Voice"]
+                )
+
+            # PROGRESS BAR
+
+            progress = min(
+                max(details["Score"], 0),
+                100
+            )
+
+            st.progress(progress)
+
+            # LEVEL BADGE
+
+            if details["Score"] >= 100:
+
+                st.success("🏆 English Master")
+
+            elif details["Score"] >= 70:
+
+                st.success("⭐ Super Speaker")
+
+            elif details["Score"] >= 40:
+
+                st.info("🔥 Improving Fast")
+
+            else:
+
+                st.warning("💪 Keep Practicing")
 
 # ========================================
 # ANALYTICS
