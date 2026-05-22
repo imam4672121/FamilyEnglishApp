@@ -3,7 +3,40 @@ import pandas as pd
 import plotly.express as px
 import os
 import sqlite3
+import streamlit as st
 
+# ========================================
+# PASSWORD PROTECTION
+# ========================================
+
+APP_PASSWORD = "familyenglish123"
+
+# SESSION STATE
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+# LOGIN SCREEN
+if not st.session_state.logged_in:
+
+    st.title("🏠 Family English Learning System")
+
+    password = st.text_input(
+        "🔐 Enter Family Password",
+        type="password"
+    )
+
+    if st.button("LOGIN"):
+
+        if password == APP_PASSWORD:
+
+            st.session_state.logged_in = True
+            st.rerun()
+
+        else:
+
+            st.error("❌ Wrong Password")
+
+    st.stop()
 # ========================================
 # PAGE CONFIG
 # ========================================
@@ -208,7 +241,8 @@ with c2:
         [
           "Correct Answer (+10)",
           "Wrong Answer (-5)",
-          "Voice Message (+5)"
+          "Voice Message (+5)",
+          "Extra Mark (+5)"
         ]
     )
 
@@ -233,6 +267,10 @@ with c3:
 
             students[selected_student]["Score"] += 5
             students[selected_student]["Voice"] += 1
+            
+        elif activity == "Extra Mark (+5)":
+
+            students[selected_student]["Score"] += 5
 
         # SAVE TO DATABASE
         cursor.execute("""
