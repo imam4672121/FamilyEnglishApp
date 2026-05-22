@@ -119,7 +119,7 @@ for student in default_students:
 conn.commit()
 
 # ========================================
-# LOAD STUDENTS
+# LOAD DATABASE
 # ========================================
 
 cursor.execute("SELECT * FROM students")
@@ -155,12 +155,82 @@ h1, h2, h3 {
     color: white;
 }
 
+.student-card {
+
+    background: #111827;
+    border: 1px solid #334155;
+    border-radius: 24px;
+    padding: 25px;
+    margin-bottom: 25px;
+
+}
+
+.rank-badge {
+
+    width: 55px;
+    height: 55px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 22px;
+    font-weight: bold;
+
+    color: white;
+
+    position: absolute;
+    top: -10px;
+    right: -10px;
+
+    border: 4px solid #0f172a;
+
+}
+
+.gold {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+}
+
+.silver {
+    background: linear-gradient(135deg, #C0C0C0, #808080);
+}
+
+.bronze {
+    background: linear-gradient(135deg, #CD7F32, #8B4513);
+}
+
+.normal {
+    background: #334155;
+}
+
+.student-photo {
+
+    border-radius: 50%;
+    width: 130px;
+    height: 130px;
+
+    object-fit: cover;
+
+    border: 5px solid #334155;
+
+}
+
+.photo-wrapper {
+
+    position: relative;
+    width: 130px;
+    margin: auto;
+
+}
+
 [data-testid="stMetric"] {
 
     background-color: #1e293b;
     border: 1px solid #334155;
     padding: 10px;
-    border-radius: 12px;
+    border-radius: 15px;
 
 }
 
@@ -237,7 +307,7 @@ with c4:
 st.divider()
 
 # ========================================
-# UPDATE SCORE SECTION
+# UPDATE SCORE
 # ========================================
 
 st.subheader("➕ Update Student Performance")
@@ -297,7 +367,7 @@ with u3:
 
             students[selected_student]["Score"] += 5
 
-        # SAVE TO DATABASE
+        # SAVE DATABASE
 
         cursor.execute("""
 
@@ -333,7 +403,7 @@ with u3:
 st.divider()
 
 # ========================================
-# STUDENT PERFORMANCE CARDS
+# STUDENT CARDS
 # ========================================
 
 st.subheader("👨‍🎓 Student Performance Cards")
@@ -351,6 +421,35 @@ cols = st.columns(3)
 for index, (name, details) in enumerate(sorted_students):
 
     with cols[index % 3]:
+
+        st.markdown(
+            "<div class='student-card'>",
+            unsafe_allow_html=True
+        )
+
+        # =====================================
+        # RANK
+        # =====================================
+
+        rank = index + 1
+
+        badge_class = "normal"
+        badge_emoji = "🎖️"
+
+        if rank == 1:
+
+            badge_class = "gold"
+            badge_emoji = "🥇"
+
+        elif rank == 2:
+
+            badge_class = "silver"
+            badge_emoji = "🥈"
+
+        elif rank == 3:
+
+            badge_class = "bronze"
+            badge_emoji = "🥉"
 
         # =====================================
         # PHOTO
@@ -373,39 +472,32 @@ for index, (name, details) in enumerate(sorted_students):
 
             photo_path = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
 
-        st.image(
-            photo_path,
-            width=120
-        )
-
         # =====================================
-        # RANK BADGES
+        # PHOTO + BADGE
         # =====================================
 
-        rank = index + 1
+        st.markdown(f"""
 
-        if rank == 1:
+        <div class="photo-wrapper">
 
-            st.success("🥇 Rank #1")
+            <img src="{photo_path}"
+            class="student-photo">
 
-        elif rank == 2:
+            <div class="rank-badge {badge_class}">
+                {badge_emoji}
+            </div>
 
-            st.info("🥈 Rank #2")
+        </div>
 
-        elif rank == 3:
-
-            st.warning("🥉 Rank #3")
-
-        else:
-
-            st.caption(f"Rank #{rank}")
+        """, unsafe_allow_html=True)
 
         # =====================================
         # NAME
         # =====================================
 
         st.markdown(
-            f"### 👤 {name}"
+            f"<h2 style='text-align:center;'>👤 {name}</h2>",
+            unsafe_allow_html=True
         )
 
         # =====================================
@@ -473,10 +565,15 @@ for index, (name, details) in enumerate(sorted_students):
 
             st.warning("💪 Keep Practicing")
 
+        st.markdown(
+            "</div>",
+            unsafe_allow_html=True
+        )
+
 st.divider()
 
 # ========================================
-# SCORE ANALYTICS
+# ANALYTICS
 # ========================================
 
 st.subheader("📈 Student Score Analytics")
