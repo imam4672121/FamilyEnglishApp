@@ -58,7 +58,7 @@ conn = sqlite3.connect(
 cursor = conn.cursor()
 
 # ========================================
-# CREATE TABLE
+# STUDENTS TABLE
 # ========================================
 
 cursor.execute("""
@@ -70,6 +70,30 @@ CREATE TABLE IF NOT EXISTS students (
     correct INTEGER,
     wrong INTEGER,
     voice INTEGER
+
+)
+
+""")
+
+conn.commit()
+
+# ========================================
+# SUBJECT PERFORMANCE TABLE
+# ========================================
+
+cursor.execute("""
+
+CREATE TABLE IF NOT EXISTS activity_scores (
+
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    student_name TEXT,
+    category TEXT,
+
+    correct INTEGER DEFAULT 0,
+    wrong INTEGER DEFAULT 0,
+
+    score INTEGER DEFAULT 0
 
 )
 
@@ -135,33 +159,6 @@ WHERE name='Shahe_meeran'
 """)
 
 conn.commit()
-for student in default_students:
-
-    cursor.execute(
-        "SELECT * FROM students WHERE name=?",
-        (student,)
-    )
-
-    existing = cursor.fetchone()
-
-    if not existing:
-
-        cursor.execute("""
-
-        INSERT INTO students
-        VALUES (?, ?, ?, ?, ?)
-
-        """, (
-
-            student,
-            0,
-            0,
-            0,
-            0
-
-        ))
-
-conn.commit()
 
 # ========================================
 # LOAD DATABASE
@@ -200,82 +197,22 @@ h1, h2, h3 {
     color: white;
 }
 
-.student-card {
-
-    background: #111827;
-    border: 1px solid #334155;
-    border-radius: 24px;
-    padding: 25px;
-    margin-bottom: 25px;
-
-}
-
-.rank-badge {
-
-    width: 55px;
-    height: 55px;
-
-    border-radius: 50%;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 22px;
-    font-weight: bold;
-
-    color: white;
-
-    position: absolute;
-    top: -10px;
-    right: -10px;
-
-    border: 4px solid #0f172a;
-
-}
-
-.gold {
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-}
-
-.silver {
-    background: linear-gradient(135deg, #C0C0C0, #808080);
-}
-
-.bronze {
-    background: linear-gradient(135deg, #CD7F32, #8B4513);
-}
-
-.normal {
-    background: #334155;
-}
-
-.student-photo {
-
-    border-radius: 50%;
-    width: 130px;
-    height: 130px;
-
-    object-fit: cover;
-
-    border: 5px solid #334155;
-
-}
-
-.photo-wrapper {
-
-    position: relative;
-    width: 130px;
-    margin: auto;
-
-}
-
 [data-testid="stMetric"] {
 
     background-color: #1e293b;
     border: 1px solid #334155;
     padding: 10px;
     border-radius: 15px;
+
+}
+
+.subject-box {
+
+    background-color:#1e293b;
+    padding:10px;
+    margin-bottom:8px;
+    border-radius:10px;
+    border:1px solid #334155;
 
 }
 
@@ -412,8 +349,6 @@ with u3:
 
             students[selected_student]["Score"] += 5
 
-        # SAVE DATABASE
-
         cursor.execute("""
 
         UPDATE students
@@ -448,6 +383,195 @@ with u3:
 st.divider()
 
 # ========================================
+# SUBJECT PERFORMANCE TRACKER
+# ========================================
+
+st.subheader("📚 Subject-wise Performance Tracker")
+
+s1, s2, s3, s4 = st.columns([2,2,2,1])
+
+with s1:
+
+    selected_student_subject = st.selectbox(
+
+        "Select Student",
+
+        list(students.keys()),
+
+        key="subject_student"
+
+    )
+
+with s2:
+
+    selected_category = st.selectbox(
+
+        "Select Subject",
+
+        [
+
+            "Grammar",
+            "Vocabulary",
+            "Tenses",
+            "Speaking",
+            "Translation",
+            "Reading",
+            "Writing",
+            "Pronunciation",
+            "Conversation",
+            "Memory Test"
+
+        ]
+
+    )
+
+with s3:
+
+    subject_result = st.selectbox(
+
+        "Result",
+
+        [
+
+            "Correct (+10)",
+            "Wrong (-5)"
+
+        ]
+
+    )
+
+with s4:
+
+    st.write("")
+    st.write("")
+
+    if st.button("ADD SUBJECT SCORE"):
+
+        cursor.execute("""
+
+        SELECT * FROM activity_scores
+
+        WHERE student_name=?
+        AND category=?
+
+        """, (
+
+            selected_student_subject,
+            selected_category
+
+        ))
+
+        existing = cursor.fetchone()
+
+        if existing:
+
+            if subject_result == "Correct (+10)":
+
+                cursor.execute("""
+
+                UPDATE activity_scores
+
+                SET
+
+                    correct = correct + 1,
+                    score = score + 10
+
+                WHERE student_name=?
+                AND category=?
+
+                """, (
+
+                    selected_student_subject,
+                    selected_category
+
+                ))
+
+            else:
+
+                cursor.execute("""
+
+                UPDATE activity_scores
+
+                SET
+
+                    wrong = wrong + 1,
+                    score = score - 5
+
+                WHERE student_name=?
+                AND category=?
+
+                """, (
+
+                    selected_student_subject,
+                    selected_category
+
+                ))
+
+        else:
+
+            if subject_result == "Correct (+10)":
+
+                cursor.execute("""
+
+                INSERT INTO activity_scores
+
+                (
+
+                    student_name,
+                    category,
+                    correct,
+                    wrong,
+                    score
+
+                )
+
+                VALUES (?, ?, ?, ?, ?)
+
+                """, (
+
+                    selected_student_subject,
+                    selected_category,
+                    1,
+                    0,
+                    10
+
+                ))
+
+            else:
+
+                cursor.execute("""
+
+                INSERT INTO activity_scores
+
+                (
+
+                    student_name,
+                    category,
+                    correct,
+                    wrong,
+                    score
+
+                )
+
+                VALUES (?, ?, ?, ?, ?)
+
+                """, (
+
+                    selected_student_subject,
+                    selected_category,
+                    0,
+                    1,
+                    -5
+
+                ))
+
+        conn.commit()
+
+        st.success("Subject performance updated!")
+
+st.divider()
+
+# ========================================
 # STUDENT CARDS
 # ========================================
 
@@ -467,10 +591,6 @@ for index, (name, details) in enumerate(sorted_students):
 
     with cols[index % 3]:
 
-        # =====================================
-        # PHOTO
-        # =====================================
-
         safe_name = name.lower().replace(" ", "_")
 
         photo_path_jpg = f"photos/{safe_name}.jpg"
@@ -488,148 +608,176 @@ for index, (name, details) in enumerate(sorted_students):
 
             photo_path = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
 
-        # =====================================
-        # RANK
-        # =====================================
-
         rank = index + 1
 
         if rank == 1:
-
             badge = "🥇"
 
         elif rank == 2:
-
             badge = "🥈"
 
         elif rank == 3:
-
             badge = "🥉"
 
         else:
-
             badge = "🏅"
 
-        # =====================================
-        # CARD CONTAINER
-        # =====================================
+        c1, c2, c3 = st.columns([1,2,1])
 
-        with st.container():
+        with c2:
 
-            # CENTER PHOTO
-
-            c1, c2, c3 = st.columns([1,2,1])
-
-            with c2:
-
-                st.image(
-                    photo_path,
-                    width=130
-                )
-
-            # RANK BADGE
-
-            st.markdown(
-
-                f"""
-
-                <div style='
-                    text-align:center;
-                    margin-top:-15px;
-                    margin-bottom:10px;
-                    font-size:28px;
-                    font-weight:bold;
-                '>
-
-                {badge} Rank #{rank}
-
-                </div>
-
-                """,
-
-                unsafe_allow_html=True
-
+            st.image(
+                photo_path,
+                width=130
             )
 
-            # NAME
+        st.markdown(
 
-            st.markdown(
+            f"""
 
-                f"""
+            <div style='
+                text-align:center;
+                margin-top:-15px;
+                margin-bottom:10px;
+                font-size:28px;
+                font-weight:bold;
+            '>
 
-                <h2 style='
-                    text-align:center;
-                    color:white;
-                '>
+            {badge} Rank #{rank}
 
-                👤 {name}
+            </div>
 
-                </h2>
+            """,
 
-                """,
+            unsafe_allow_html=True
 
-                unsafe_allow_html=True
+        )
 
+        st.markdown(
+
+            f"""
+
+            <h2 style='
+                text-align:center;
+                color:white;
+            '>
+
+            👤 {name}
+
+            </h2>
+
+            """,
+
+            unsafe_allow_html=True
+
+        )
+
+        m1, m2, m3, m4 = st.columns(4)
+
+        with m1:
+
+            st.metric(
+                "⭐ Score",
+                details["Score"]
             )
 
-            # METRICS
+        with m2:
 
-            m1, m2, m3, m4 = st.columns(4)
-
-            with m1:
-
-                st.metric(
-                    "⭐ Score",
-                    details["Score"]
-                )
-
-            with m2:
-
-                st.metric(
-                    "✅ Correct",
-                    details["Correct"]
-                )
-
-            with m3:
-
-                st.metric(
-                    "❌ Wrong",
-                    details["Wrong"]
-                )
-
-            with m4:
-
-                st.metric(
-                    "🎤 Voice",
-                    details["Voice"]
-                )
-
-            # PROGRESS BAR
-
-            progress = min(
-                max(details["Score"], 0),
-                100
+            st.metric(
+                "✅ Correct",
+                details["Correct"]
             )
 
-            st.progress(progress)
+        with m3:
 
-            # LEVEL BADGE
+            st.metric(
+                "❌ Wrong",
+                details["Wrong"]
+            )
 
-            if details["Score"] >= 100:
+        with m4:
 
-                st.success("🏆 English Master")
+            st.metric(
+                "🎤 Voice",
+                details["Voice"]
+            )
 
-            elif details["Score"] >= 70:
+        progress = min(
+            max(details["Score"], 0),
+            100
+        )
 
-                st.success("⭐ Super Speaker")
+        st.progress(progress)
 
-            elif details["Score"] >= 40:
+        if details["Score"] >= 100:
 
-                st.info("🔥 Improving Fast")
+            st.success("🏆 English Master")
 
-            else:
+        elif details["Score"] >= 70:
 
-                st.warning("💪 Keep Practicing")
+            st.success("⭐ Super Speaker")
+
+        elif details["Score"] >= 40:
+
+            st.info("🔥 Improving Fast")
+
+        else:
+
+            st.warning("💪 Keep Practicing")
+
+        # ========================================
+        # SUBJECT PERFORMANCE DISPLAY
+        # ========================================
+
+        cursor.execute("""
+
+        SELECT
+
+            category,
+            score
+
+        FROM activity_scores
+
+        WHERE student_name=?
+
+        ORDER BY score DESC
+
+        """, (name,))
+
+        subject_scores = cursor.fetchall()
+
+        if subject_scores:
+
+            st.markdown("### 📚 Subject-wise Performance")
+
+            for subject in subject_scores:
+
+                category = subject[0]
+                score = subject[1]
+
+                st.markdown(
+
+                    f"""
+
+                    <div class='subject-box'>
+
+                    <b>{category}</b>
+
+                    <span style='float:right;'>
+
+                    ⭐ {score}
+
+                    </span>
+
+                    </div>
+
+                    """,
+
+                    unsafe_allow_html=True
+
+                )
+
+st.divider()
 
 # ========================================
 # ANALYTICS
@@ -681,11 +829,11 @@ with open("english_class.db", "rb") as file:
 
     )
 
-st.divider()
-
 # ========================================
 # RESET SCORES
 # ========================================
+
+st.divider()
 
 st.subheader("⚙️ Controls")
 
@@ -733,8 +881,6 @@ if st.button("📦 Create Full Backup ZIP"):
         "w"
     ) as zipf:
 
-        # ADD MAIN FILES
-
         files_to_backup = [
 
             "app.py",
@@ -748,8 +894,6 @@ if st.button("📦 Create Full Backup ZIP"):
             if os.path.exists(file):
 
                 zipf.write(file)
-
-        # ADD PHOTOS FOLDER
 
         if os.path.exists("photos"):
 
