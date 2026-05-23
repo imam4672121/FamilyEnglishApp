@@ -807,10 +807,10 @@ st.plotly_chart(
     use_container_width=True
 )
 # ========================================
-# SUBJECT SCORE COMPARISON
+# INDIVIDUAL STUDENT SUBJECT CHART
 # ========================================
 
-st.subheader("📚 Subject-wise Student Comparison")
+st.subheader("📚 Student Subject Performance")
 
 # LOAD SUBJECT DATA
 
@@ -830,20 +830,37 @@ FROM activity_scores
 
 if not subject_chart_df.empty:
 
-    # CREATE GROUPED BAR CHART
+    # STUDENT DROPDOWN
+
+    selected_chart_student = st.selectbox(
+
+        "👨‍🎓 Select Student",
+
+        subject_chart_df["student_name"].unique()
+
+    )
+
+    # FILTER DATA
+
+    filtered_subject_df = subject_chart_df[
+
+        subject_chart_df["student_name"]
+        == selected_chart_student
+
+    ]
+
+    # CREATE SUBJECT CHART
 
     subject_chart = px.bar(
 
-        subject_chart_df,
+        filtered_subject_df,
 
-        x="student_name",
+        x="category",
         y="score",
 
-        color="category",
+        text="score",
 
-        barmode="group",
-
-        text="score"
+        color="category"
 
     )
 
@@ -851,12 +868,12 @@ if not subject_chart_df.empty:
 
         template="plotly_dark",
 
-        height=600,
+        height=500,
 
-        xaxis_title="Students",
-        yaxis_title="Subject Score",
+        xaxis_title="Subjects",
+        yaxis_title="Score",
 
-        legend_title="Subjects"
+        showlegend=False
 
     )
 
