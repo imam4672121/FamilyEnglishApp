@@ -806,7 +806,70 @@ st.plotly_chart(
     chart,
     use_container_width=True
 )
+# ========================================
+# SUBJECT SCORE COMPARISON
+# ========================================
 
+st.subheader("📚 Subject-wise Student Comparison")
+
+# LOAD SUBJECT DATA
+
+subject_chart_df = pd.read_sql_query("""
+
+SELECT
+
+    student_name,
+    category,
+    score
+
+FROM activity_scores
+
+""", conn)
+
+# CHECK DATA
+
+if not subject_chart_df.empty:
+
+    # CREATE GROUPED BAR CHART
+
+    subject_chart = px.bar(
+
+        subject_chart_df,
+
+        x="student_name",
+        y="score",
+
+        color="category",
+
+        barmode="group",
+
+        text="score"
+
+    )
+
+    subject_chart.update_layout(
+
+        template="plotly_dark",
+
+        height=600,
+
+        xaxis_title="Students",
+        yaxis_title="Subject Score",
+
+        legend_title="Subjects"
+
+    )
+
+    st.plotly_chart(
+
+        subject_chart,
+        use_container_width=True
+
+    )
+
+else:
+
+    st.info("No subject performance data available yet.")
 st.divider()
 
 # ========================================
