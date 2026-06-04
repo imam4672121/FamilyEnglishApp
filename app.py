@@ -382,6 +382,89 @@ with u3:
 
 st.divider()
 
+
+st.subheader("📝 Bulk Test Entry")
+
+c1, c2 = st.columns(2)
+
+with c1:
+
+    bulk_student = st.selectbox(
+        "Student",
+        df["Student"],
+        key="bulk_student"
+    )
+
+    correct_count = st.number_input(
+        "Correct Answers",
+        min_value=0,
+        max_value=100,
+        value=0
+    )
+
+    wrong_count = st.number_input(
+        "Wrong Answers",
+        min_value=0,
+        max_value=100,
+        value=0
+    )
+
+with c2:
+
+    voice_count = st.number_input(
+        "Voice Messages",
+        min_value=0,
+        max_value=100,
+        value=0
+    )
+
+    extra_marks = st.number_input(
+        "Extra Marks",
+        min_value=0,
+        max_value=100,
+        value=0
+    )
+
+if st.button("✅ UPDATE TEST RESULT"):
+
+    total_score = (
+        (correct_count * 10)
+        + (wrong_count * -5)
+        + (voice_count * 5)
+        + extra_marks
+    )
+
+    cursor.execute("""
+
+    UPDATE students
+
+    SET
+
+        score = score + ?,
+        correct = correct + ?,
+        wrong = wrong + ?,
+        voice = voice + ?
+
+    WHERE name = ?
+
+    """, (
+
+        total_score,
+        correct_count,
+        wrong_count,
+        voice_count,
+        bulk_student
+
+    ))
+
+    conn.commit()
+
+    st.success(
+        f"{bulk_student} updated successfully!"
+    )
+
+    st.rerun()
+
 # ========================================
 # SUBJECT PERFORMANCE TRACKER
 # ========================================
