@@ -292,13 +292,9 @@ st.divider()
 # UPDATE SCORE
 # ========================================
 
-# ========================================
-# UPDATE SCORE
-# ========================================
-
 st.subheader("➕ Update Student Performance")
 
-u1, u2, u3 = st.columns([2,2,1])
+u1, u2, u3, u4 = st.columns([2,1,1,1])
 
 with u1:
 
@@ -309,51 +305,37 @@ with u1:
 
 with u2:
 
-    activity = st.selectbox(
-
-        "Select Activity",
-
-        [
-
-            "Correct Answer (+10)",
-            "Wrong Answer (-5)",
-            "Voice Message (+5)",
-            "Extra Mark (+5)"
-
-        ]
-
+    correct_count = st.number_input(
+        "Correct Answers",
+        min_value=0,
+        value=0,
+        step=1
     )
 
 with u3:
+
+    wrong_count = st.number_input(
+        "Wrong Answers",
+        min_value=0,
+        value=0,
+        step=1
+    )
+
+with u4:
 
     st.write("")
     st.write("")
 
     if st.button(
-        "ADD SCORE",
+        "UPDATE SCORE",
         use_container_width=True
     ):
 
-        if activity == "Correct Answer (+10)":
-
-            students[selected_student]["Score"] += 10
-            students[selected_student]["Correct"] += 1
-
-        elif activity == "Wrong Answer (-5)":
-
-            students[selected_student]["Score"] -= 5
-            students[selected_student]["Wrong"] += 1
-
-        elif activity == "Voice Message (+5)":
-
-            students[selected_student]["Score"] += 5
-            students[selected_student]["Voice"] += 1
-
-        elif activity == "Extra Mark (+5)":
-
-            students[selected_student]["Score"] += 5
-
-        # SAVE DATABASE
+        score_change = (
+            (correct_count * 10)
+            -
+            (wrong_count * 5)
+        )
 
         cursor.execute("""
 
@@ -361,19 +343,17 @@ with u3:
 
         SET
 
-            score=?,
-            correct=?,
-            wrong=?,
-            voice=?
+            score = score + ?,
+            correct = correct + ?,
+            wrong = wrong + ?
 
-        WHERE name=?
+        WHERE name = ?
 
         """, (
 
-            students[selected_student]["Score"],
-            students[selected_student]["Correct"],
-            students[selected_student]["Wrong"],
-            students[selected_student]["Voice"],
+            score_change,
+            correct_count,
+            wrong_count,
             selected_student
 
         ))
@@ -385,9 +365,6 @@ with u3:
         )
 
         st.rerun()
-
-st.divider()
-
 
 # ========================================
 # SUBJECT PERFORMANCE TRACKER
